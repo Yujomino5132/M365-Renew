@@ -12,10 +12,13 @@
     "dev": "wrangler dev",
     "test": "vitest --run || 1"
   },
+  "dependencies": {
+    "hono": "^4.8.x",
+    "chanfana": "^2.8.x",
+    "zod": "^4.0.x"
+  },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",
-    "@cloudflare/vitest-pool-workers": "^0.10.4",
-    "typescript": "^5.5.2",
     "vitest": "^4.0.7",
     "wrangler": "^4.45.4",
     "eslint": "^9.39.x",

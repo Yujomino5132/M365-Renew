@@ -9,6 +9,13 @@
   "browser": {
     "binding": "MYBROWSER",
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "browser-worker-db",
+      "database_id": "REPLACE_WITH_ACTUAL_DATABASE_ID"
+    }
+  ],
   "observability": {
     "enabled": true,
   },
