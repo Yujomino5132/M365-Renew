@@ -3,7 +3,7 @@
 		/* Visit https://aka.ms/tsconfig.json to read more about this file */
 
 		/* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-		"target": "es2021",
+		"target": "esnext",
 		/* Specify a set of bundled library declaration files that describe the target runtime environment. */
 		"lib": ["es2021"],
 		/* Specify what JSX code is generated. */
@@ -11,7 +11,6 @@
 
 		/* Specify what module code is generated. */
 		"module": "es2022",
-		/* Specify how TypeScript looks up a file from a given module specifier. */
 		"moduleResolution": "Bundler",
 		/* Enable importing .json files */
 		"resolveJsonModule": true,
@@ -36,6 +35,9 @@
 
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true,
+		"paths": {
+			"@/*": ["./src/*"]
+		},
 		"types": [
 			"./worker-configuration.d.ts"
 		]
