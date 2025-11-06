@@ -9,27 +9,65 @@ class M365LoginUtil {
   public static async login(browser: Fetcher, email: string, password: string, totpKey: string): Promise<boolean> {
     const browserInstance = await puppeteer.launch(browser);
     const page = await browserInstance.newPage();
-    await page.goto(M365LoginUtil.M365_LOGIN_URL);
-    await page.keyboard.type(email, { delay: 50 });
-    await page.keyboard.press('Enter');
-    await SleepUtil.sleep(1);
-    await page.keyboard.type(password, { delay: 50 });
-    await page.keyboard.press('Enter');
-    await SleepUtil.sleep(1);
-    const totpUrl = `https://totp-generator.2ba35e4d622c4747d091cb066978b585.workers.dev/generate-totp?key=${totpKey}&digits=6&period=30&algorithm=SHA-1`;
-    const response = await fetch(totpUrl);
-    if (!response.ok) {
-      throw new Error('failed to get totp');
+
+    try {
+      // Step 1: Navigate to login page
+      await page.goto(this.M365_LOGIN_URL_NORMALIZED, { waitUntil: 'networkidle2' });
+
+      // Step 2: Enter email
+      await page.type('input[type="email"]', email, { delay: 50 });
+      await page.keyboard.press('Enter');
+      await SleepUtil.sleep(1);
+
+      // Step 3: Enter password
+      await page.type('input[type="password"]', password, { delay: 50 });
+      await page.keyboard.press('Enter');
+      await SleepUtil.sleep(1);
+
+      // Step 4: Generate and enter TOTP
+      const totpUrl = `https://totp-generator.2ba35e4d622c4747d091cb066978b585.workers.dev/generate-totp?key=${totpKey}&digits=6&period=30&algorithm=SHA-1`;
+      const response = await fetch(totpUrl);
+
+      if (!response.ok) {
+        throw new Error('Failed to get TOTP');
+      }
+
+      const data = await response.json();
+      const otp = data.otp;
+
+      await page.type('input[name="otc"]', otp, { delay: 50 });
+      await page.keyboard.press('Enter');
+      await SleepUtil.sleep(3);
+
+      // Step 5: Handle post-login confirmation (e.g., "Stay signed in?")
+      const staySignedInSelector = '[data-testid="secondaryButton"]';
+      if (await page.$(staySignedInSelector)) {
+        await page.click(staySignedInSelector);
+      }
+
+      await SleepUtil.sleep(5);
+
+      // Step 6: Verify login success
+      // You can check for:
+      // - A redirect URL (e.g., Microsoft 365 home page)
+      // - Specific elements visible only after login
+      // - The absence of an error message
+      const currentUrl = page.url();
+
+      console.log('Current Url: ', currentUrl);
+      // Example success indicators
+      const loginSuccess = currentUrl.includes('https://www.microsoft.com/');
+
+      // Example error indicators
+      const loginError = await page.$('div.error, div[role="alert"]');
+
+      await browserInstance.close();
+      return loginSuccess && !loginError;
+    } catch (error) {
+      console.error('Login process failed:', error);
+      await browserInstance.close();
+      return false;
     }
-    const data = await response.json();
-    const otp = data.otp;
-    await page.keyboard.type(otp, { delay: 50 });
-    await page.keyboard.press('Enter');
-    await SleepUtil.sleep(3);
-    await page.click('[data-testid="secondaryButton"]');
-    await SleepUtil.sleep(5);
-    await browserInstance.close();
-    return true;
   }
 }
 
