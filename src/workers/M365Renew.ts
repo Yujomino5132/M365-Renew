@@ -38,16 +38,16 @@ class M365RenewWorker extends AbstractWorker {
 
     console.log('Hello');
     const user = await userDAO.getNextUserForProcessing();
-    console.log('now processing user: ', user);
+    console.log('now processing user: ', user.userId);
     if (!user) {
       return;
     }
 
     try {
-      const credentialsResponse = await env.SELF.fetch(`/api/internal/credentials/${user.userId}`);
+      const credentialsResponse = await env.SELF.fetch(`https://self.internal/api/internal/credentials/${user.userId}`);
       const credentials = await credentialsResponse.json();
 
-      const loginResponse = await env.SELF.fetch('/api/auth/login', {
+      const loginResponse = await env.SELF.fetch('https://self.internal/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
