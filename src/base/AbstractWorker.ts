@@ -6,6 +6,12 @@ abstract class AbstractWorker {
   }
 
   public async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const url: URL = new URL(request.url);
+    if ('/__scheduled' === url.pathname) {
+      await this.scheduled(null, env, ctx);
+      return new Response(null, { status: 204 });
+    }
+
     this.printExecId();
     console.log('🔁 Worker triggered by HTTP request');
     try {
