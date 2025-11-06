@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "browser-worker",
+  "name": "m365-renew",
   "main": "src/index.ts",
   "compatibility_date": "2025-11-05",
   "workers_dev": false,
@@ -21,6 +21,12 @@
       "binding": "AES_ENCRYPTION_KEY_SECRET",
       "store_id": "cea394c91b2a4c648bcc92bc998ffc5e",
       "secret_name": "browser-worker-secrets",
+    },
+  ],
+  "services": [
+    {
+      "binding": "SELF",
+      "service": "m365-renew",
     },
   ],
   "observability": {
