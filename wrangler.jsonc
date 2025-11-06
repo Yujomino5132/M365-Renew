@@ -16,6 +16,12 @@
       "database_id": "REPLACE_WITH_ACTUAL_DATABASE_ID"
     }
   ],
+  "secrets_store": [
+    {
+      "binding": "SECRETS",
+      "store_name": "browser-worker-secrets"
+    }
+  ],
   "observability": {
     "enabled": true,
   },

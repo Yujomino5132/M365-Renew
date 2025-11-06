@@ -1,6 +1,6 @@
 export interface Env {
   DB: D1Database;
-  AES_GCM_KEY: string;
+  SECRETS: any; // Cloudflare Secrets Store binding
 }
 
 export interface UserCredentials {

@@ -41,7 +41,12 @@ export class GetCredentialsRoute extends OpenAPIRoute {
 
   async handle(c: Context<{ Bindings: Env }>) {
     const { user_id } = c.req.param();
-    const key = c.env.AES_GCM_KEY;
+    
+    // Get the AES key from Secrets Store
+    const key = await c.env.SECRETS.get('AES_GCM_KEY');
+    if (!key) {
+      return c.json({ error: 'AES key not found. Please generate a key first.' }, 500);
+    }
 
     const result = await c.env.DB.prepare(`
       SELECT encrypted_email_address, encrypted_password, encrypted_totp_key, salt
