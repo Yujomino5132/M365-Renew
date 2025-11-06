@@ -15,4 +15,4 @@ openapi.post('/api/admin/generate-key', GenerateKeyRoute);
 openapi.post('/api/credentials/store', StoreCredentialsRoute);
 openapi.get('/api/internal/credentials/:user_id', GetCredentialsRoute);
 
-export default app;
+export default openapi;

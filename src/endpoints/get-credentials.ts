@@ -1,6 +1,5 @@
 import { OpenAPIRoute } from 'chanfana';
 import { Context } from 'hono';
-import { z } from 'zod';
 import { decryptData } from '../crypto/aes-gcm';
 import { Env } from '../interfaces';
 
@@ -9,21 +8,28 @@ export class GetCredentialsRoute extends OpenAPIRoute {
     tags: ['Internal'],
     summary: 'Get User Credentials',
     description: 'Internal route to decrypt and return user credentials',
-    request: {
-      params: z.object({
-        user_id: z.string().transform(Number),
-      }),
-    },
+    parameters: [
+      {
+        name: 'user_id',
+        in: 'path',
+        description: 'User ID to retrieve credentials for',
+        required: true,
+        schema: { type: 'string' },
+      },
+    ],
     responses: {
       '200': {
         description: 'Credentials retrieved successfully',
         content: {
           'application/json': {
-            schema: z.object({
-              email_address: z.string(),
-              password: z.string(),
-              totp_key: z.string(),
-            }),
+            schema: {
+              type: 'object',
+              properties: {
+                email_address: { type: 'string' },
+                password: { type: 'string' },
+                totp_key: { type: 'string' },
+              },
+            },
           },
         },
       },

@@ -1,0 +1,18 @@
+
+> browser-worker@0.0.0 dev
+> wrangler dev
+
+
+ ⛅️ wrangler 4.45.4
+───────────────────
+Your Worker has access to the following bindings:
+Binding                                Resource         Mode
+env.DB (browser-worker-db)             D1 Database      local
+env.MYBROWSER                          Browser          local
+
+❓ Your types might be out of date. Re-run `wrangler types` to ensure your types are correct.
+⎔ Starting local server...
+[wrangler:info] Ready on http://localhost:8787
+[wrangler:info] GET /openapi.json 200 OK (10ms)
+[wrangler:info] GET /openapi.json 200 OK (2ms)
+[wrangler:info] GET /docs 200 OK (4ms)
