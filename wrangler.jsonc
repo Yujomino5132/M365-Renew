@@ -7,7 +7,7 @@
   "preview_urls": false,
   "compatibility_flags": ["nodejs_compat"],
   "browser": {
-    "binding": "MYBROWSER",
+    "binding": "BROWSER",
   },
   "d1_databases": [
     {

@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { GenerateKeyRoute } from '@/endpoints/generate-key';
 import { StoreCredentialsRoute } from '@/endpoints/store-credentials';
 import { GetCredentialsRoute } from '@/endpoints/get-credentials';
+import { LoginRoute } from '@/endpoints/login';
 
 class M365RenewWorker extends AbstractWorker {
   protected readonly app: Hono<{ Bindings: Env }>;
@@ -19,6 +20,7 @@ class M365RenewWorker extends AbstractWorker {
     openapi.post('/api/admin/generate-key', GenerateKeyRoute);
     openapi.post('/api/credentials/store', StoreCredentialsRoute);
     openapi.get('/api/internal/credentials/:user_id', GetCredentialsRoute);
+    openapi.post('/api/auth/login', LoginRoute);
 
     this.app = openapi;
   }
