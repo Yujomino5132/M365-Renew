@@ -4,7 +4,7 @@ import { SleepUtil } from './SleepUtil';
 class M365LoginUtil {
   protected static M365_LOGIN_URL: string = 'https://www.microsoft.com/cascadeauth/store/account/signin';
 
-  protected static M365_LOGIN_URL_NORMALIZED: string = new URL(M365_LOGIN_URL).toString();
+  protected static M365_LOGIN_URL_NORMALIZED: string = new URL(this.M365_LOGIN_URL).toString();
 
   public static async login(browser: Fetcher, email: string, password: string, totpKey: string): Promise<boolean> {
     const browserInstance = await puppeteer.launch(browser);
