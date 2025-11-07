@@ -36,9 +36,8 @@ class M365RenewWorker extends AbstractWorker {
     const stateDAO = new UserProcessingStateDAO(env.DB);
     const logDAO = new UserProcessingLogDAO(env.DB);
 
-    console.log('Hello');
     const user = await userDAO.getNextUserForProcessing();
-    console.log('now processing user: ', user.userId);
+    console.log('👉 Now processing userId: ', user.userId);
     if (!user) {
       return;
     }
