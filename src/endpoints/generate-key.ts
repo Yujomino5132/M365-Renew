@@ -38,7 +38,8 @@ export class GenerateKeyRoute extends IAPIRoute<GenerateKeyRequest, GenerateKeyR
     },
   };
 
-  protected async handleRequest(_request: GenerateKeyRequest, _env: Env, _cxt: APIContext<GenerateKeyEnv>): Promise<GenerateKeyResponse> {
+  protected async handleRequest(_request: GenerateKeyRequest, _env: Env, _ctx: APIContext<GenerateKeyEnv>): Promise<GenerateKeyResponse> {
+    VoidUtil.void(_request, _env, _ctx);
     const key = await generateAESGCMKey();
 
     // Store the key in Secrets Store

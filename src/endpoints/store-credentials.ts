@@ -59,22 +59,28 @@ export class StoreCredentialsRoute extends IAPIRoute<StoreCredentialsRequest, St
   protected async handleRequest(
     request: StoreCredentialsRequest,
     env: Env,
-    _cxt: APIContext<StoreCredentialsEnv>,
+    _ctx: APIContext<StoreCredentialsEnv>,
   ): Promise<StoreCredentialsResponse> {
-    const key:string = await env.AES_ENCRYPTION_KEY_SECRET.get();
+    VoidUtil.void(_ctx);
+    const key: string = await env.AES_ENCRYPTION_KEY_SECRET.get();
     if (!key) {
       throw new InternalServerError('AES key not found. Please generate a key first.');
     }
 
-    const iv:Uint8Array<ArrayBuffer> = crypto.getRandomValues(new Uint8Array(12));
-    const ivBase64:string = btoa(String.fromCharCode(...iv));
+    const iv: Uint8Array<ArrayBuffer> = crypto.getRandomValues(new Uint8Array(12));
+    const ivBase64: string = btoa(String.fromCharCode(...iv));
 
-    const encryptedEmail:{encrypted:string,iv:string} = await encryptData(request.email_address, key, ivBase64);
-    const encryptedPassword:{encrypted:string,iv:string} = await encryptData(request.password, key, ivBase64);
-    const encryptedTotpKey:{encrypted:string,iv:string} = await encryptData(request.totp_key, key, ivBase64);
+    const encryptedEmail: { encrypted: string; iv: string } = await encryptData(request.email_address, key, ivBase64);
+    const encryptedPassword: { encrypted: string; iv: string } = await encryptData(request.password, key, ivBase64);
+    const encryptedTotpKey: { encrypted: string; iv: string } = await encryptData(request.totp_key, key, ivBase64);
 
-    const userDAO :UserDAO= new UserDAO(env.DB);
-    const userId:number = await userDAO.createUser(encryptedEmail.encrypted, encryptedPassword.encrypted, encryptedTotpKey.encrypted, ivBase64);
+    const userDAO: UserDAO = new UserDAO(env.DB);
+    const userId: number = await userDAO.createUser(
+      encryptedEmail.encrypted,
+      encryptedPassword.encrypted,
+      encryptedTotpKey.encrypted,
+      ivBase64,
+    );
 
     return {
       success: true,

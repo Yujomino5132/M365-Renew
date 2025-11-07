@@ -35,7 +35,7 @@ class UserDAO {
     encryptedTotpKey: string,
     salt: string,
   ): Promise<number> {
-    const result:D1Result<Record<string,unknown>> = await this.database
+    const result: D1Result<Record<string, unknown>> = await this.database
       .prepare(
         `INSERT INTO users (encrypted_email_address, encrypted_password, encrypted_totp_key, salt)
          VALUES (?, ?, ?, ?)`,

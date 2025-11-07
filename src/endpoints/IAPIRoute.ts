@@ -27,7 +27,7 @@ abstract class IAPIRoute<TRequest extends IRequest, TResponse extends IResponse,
     }
   }
 
-  protected abstract handleRequest(request: TRequest, env: TEnv, cxt: APIContext<TEnv>): Promise<TResponse>;
+  protected abstract handleRequest(request: TRequest, env: TEnv, ctx: APIContext<TEnv>): Promise<TResponse>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
