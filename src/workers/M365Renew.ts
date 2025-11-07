@@ -49,7 +49,7 @@ class M365RenewWorker extends AbstractWorker {
     console.log('👉 Now processing userId: ', user.userId);
 
     let status: 'success' | 'failure';
-    let message: string;
+    let result_message: string;
 
     try {
       const credentialsResponse: Response = await env.SELF.fetch(`https://self.internal/api/internal/credentials/${user.userId}`);
@@ -60,17 +60,17 @@ class M365RenewWorker extends AbstractWorker {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
       });
-      const { success } = await loginResponse.json();
+      const { success, message } = await loginResponse.json();
 
       status = success ? 'success' : 'failure';
-      message = success ? 'Login successful' : 'Login failed';
+      result_message = success ? 'Login successful' : message;
 
-      await stateDAO.upsertState(user.userId, status, message);
-      await logDAO.createLog(user.userId, status, message);
+      await stateDAO.upsertState(user.userId, status, result_message);
+      await logDAO.createLog(user.userId, status, result_message);
     } catch (error) {
       const errorMessage: string = error instanceof Error ? error.message : 'Unknown error';
       status = 'failure';
-      message = errorMessage;
+      result_message = errorMessage;
       await stateDAO.upsertState(user.userId, 'failure', errorMessage);
       await logDAO.createLog(user.userId, 'failure', errorMessage);
     }
@@ -82,7 +82,7 @@ class M365RenewWorker extends AbstractWorker {
       body: JSON.stringify({
         to: env.NOTIFICATION_EMAIL_ADDRESS,
         subject: `M365 Processing - User ${user.userId}: ${status}`,
-        text: `User: ${user.userId}\nStatus: ${status}\nMessage: ${message}`,
+        text: `User: ${user.userId}\nStatus: ${status}\nMessage: ${result_message}`,
       }),
     });
   }
