@@ -24,6 +24,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Dump WRANGLER_JSONC to Repository
+        run: |
+          if [ ! -f "wrangler.jsonc" ]; then
+            echo "${WRANGLER_JSONC}" > wrangler.jsonc
+          fi
+
       - name: Deploy with Wrangler
         run: npm run deploy
         env:
