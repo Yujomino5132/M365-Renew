@@ -8,7 +8,7 @@ class UserProcessingLogDAO {
   }
 
   public async createLog(userId: number, processStatus: 'success' | 'failure' | 'skipped', message?: string): Promise<number> {
-    const result = await this.database
+    const result:D1Result<Record<string,unknown>> = await this.database
       .prepare(
         `INSERT INTO user_processing_log (user_id, process_status, message)
          VALUES (?, ?, ?)`,

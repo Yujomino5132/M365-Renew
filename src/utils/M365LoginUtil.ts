@@ -1,4 +1,4 @@
-import puppeteer from '@cloudflare/puppeteer';
+import puppeteer, {Browser, ElementHandle, Page} from '@cloudflare/puppeteer';
 import { SleepUtil } from './SleepUtil';
 
 class M365LoginUtil {
@@ -7,8 +7,8 @@ class M365LoginUtil {
   protected static M365_LOGIN_URL_NORMALIZED: string = new URL(this.M365_LOGIN_URL).toString();
 
   public static async login(browser: Fetcher, totpGenerator: Fetcher, email: string, password: string, totpKey: string): Promise<boolean> {
-    const browserInstance = await puppeteer.launch(browser);
-    const page = await browserInstance.newPage();
+    const browserInstance:Browser = await puppeteer.launch(browser);
+    const page:Page = await browserInstance.newPage();
 
     try {
       // Step 1: Navigate to login page
@@ -26,21 +26,21 @@ class M365LoginUtil {
 
       // Step 4: Generate and enter TOTP
       const totpUrl = `https://totp-generator.internal/generate-totp?key=${totpKey}&digits=6&period=30&algorithm=SHA-1`;
-      const response = await totpGenerator.fetch(totpUrl);
+      const response:Response = await totpGenerator.fetch(totpUrl);
 
       if (!response.ok) {
         throw new Error('Failed to get TOTP');
       }
 
-      const data = await response.json();
-      const otp = data.otp;
+      const data:unknown = await response.json();
+      const otp:string = data.otp;
 
       await page.type('input[name="otc"]', otp, { delay: 50 });
       await page.keyboard.press('Enter');
       await SleepUtil.sleep(3);
 
       // Step 5: Handle post-login confirmation (e.g., "Stay signed in?")
-      const staySignedInSelector = '[data-testid="secondaryButton"]';
+      const staySignedInSelector:string  = '[data-testid="secondaryButton"]';
       if (await page.$(staySignedInSelector)) {
         await page.click(staySignedInSelector);
       }
@@ -52,14 +52,14 @@ class M365LoginUtil {
       // - A redirect URL (e.g., Microsoft 365 home page)
       // - Specific elements visible only after login
       // - The absence of an error message
-      const currentUrl = page.url();
+      const currentUrl:string = page.url();
 
       console.log('Current Url: ', currentUrl);
       // Example success indicators
-      const loginSuccess = currentUrl.includes('https://www.microsoft.com/');
+      const loginSuccess:boolean = currentUrl.includes('https://www.microsoft.com/');
 
       // Example error indicators
-      const loginError = await page.$('div.error, div[role="alert"]');
+      const loginError: ElementHandle | null = await page.$('div.error, div[role="alert"]');
 
       await browserInstance.close();
       return loginSuccess && !loginError;

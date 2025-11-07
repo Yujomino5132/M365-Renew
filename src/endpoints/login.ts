@@ -52,9 +52,8 @@ export class LoginRoute extends IAPIRoute<LoginRequest, LoginResponse, LoginEnv>
     },
   };
 
-  protected async handleRequest(request: LoginRequest, env: Env, cxt: APIContext<LoginEnv>): Promise<LoginResponse> {
-    VoidUtil.void(cxt);
-    const success = await M365LoginUtil.login(env.BROWSER, env.TOTP_GENERATOR, request.email_address, request.password, request.totp_key);
+  protected async handleRequest(request: LoginRequest, env: Env, _cxt: APIContext<LoginEnv>): Promise<LoginResponse> {
+    const success:boolean = await M365LoginUtil.login(env.BROWSER, env.TOTP_GENERATOR, request.email_address, request.password, request.totp_key);
     return { success };
   }
 }

@@ -1,4 +1,4 @@
-import { User, UserInternal } from '../model';
+import { User, UserInternal } from '@/model';
 
 class UserDAO {
   protected readonly database: D1Database;
@@ -35,7 +35,7 @@ class UserDAO {
     encryptedTotpKey: string,
     salt: string,
   ): Promise<number> {
-    const result = await this.database
+    const result:D1Result<Record<string,unknown>> = await this.database
       .prepare(
         `INSERT INTO users (encrypted_email_address, encrypted_password, encrypted_totp_key, salt)
          VALUES (?, ?, ?, ?)`,
