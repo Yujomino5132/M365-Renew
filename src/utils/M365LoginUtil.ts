@@ -1,5 +1,6 @@
 import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
 import { SleepUtil } from './SleepUtil';
+import { InternalServerError } from '@/error';
 
 class M365LoginUtil {
   protected static M365_LOGIN_URL: string = 'https://www.microsoft.com/cascadeauth/store/account/signin';
@@ -23,20 +24,23 @@ class M365LoginUtil {
       await page.type('input[type="email"]', email, { delay: 0 });
       await page.keyboard.press('Enter');
       console.log('➡️ Entered email address into the browser.');
-      await SleepUtil.sleepMs(300);
+      await SleepUtil.sleep(2);
 
       // Step 3: Enter password
       await page.type('input[type="password"]', password, { delay: 0 });
       await page.keyboard.press('Enter');
       console.log('➡️ Entered password into the browser.');
-      await SleepUtil.sleepMs(300);
+      await SleepUtil.sleep(2);
 
       // Step 4: Generate and enter TOTP
-      const totpUrl = `https://totp-generator.internal/generate-totp?key=${totpKey}&digits=6&period=30&algorithm=SHA-1`;
-      const response: Response = await totpGenerator.fetch(totpUrl);
-
+      const totpInstanceLocation: string | undefined = process.env.TOTP_GENERATOR_INSTANCE_LOCATION;
+      if (!totpInstanceLocation) {
+        throw new InternalServerError('TOTP instance location not specified');
+      }
+      const totpRequestUrl = `https://${totpInstanceLocation}/generate-totp?key=${totpKey}&digits=6&period=30&algorithm=SHA-1`;
+      const response: Response = await fetch(totpRequestUrl);
       if (!response.ok) {
-        throw new Error('Failed to get TOTP');
+        throw new InternalServerError('Failed to get TOTP.');
       }
 
       const data = (await response.json()) as { otp: string };
@@ -44,8 +48,8 @@ class M365LoginUtil {
 
       await page.type('input[name="otc"]', otp, { delay: 50 });
       await page.keyboard.press('Enter');
-      console.log('➡️ Entered otp into the browser.');
-      await SleepUtil.sleepMs(500);
+      console.log('➡️ Entered OTP into the browser.');
+      await SleepUtil.sleep(3);
 
       // Step 5: Handle post-login confirmation (e.g., "Stay signed in?")
       const staySignedInSelector: string = '[data-testid="secondaryButton"]';
@@ -54,7 +58,7 @@ class M365LoginUtil {
       }
       console.log('➡️ Selected "No" to "Stay signed in?"');
 
-      await SleepUtil.sleep(2);
+      await SleepUtil.sleep(5);
 
       // Step 6: Verify login success
       // You can check for:
@@ -63,7 +67,7 @@ class M365LoginUtil {
       // - The absence of an error message
       const currentUrl: string = page.url();
 
-      console.log('Current Url: ', currentUrl);
+      console.log('➡️ Returned to Url: ', currentUrl);
       // Example success indicators
       const loginSuccess: boolean = currentUrl.includes('https://www.microsoft.com/');
 
@@ -71,6 +75,7 @@ class M365LoginUtil {
       const loginError: ElementHandle | null = await page.$('div.error, div[role="alert"]');
 
       await browserInstance.close();
+      console.log('✅ Sign-in was successful');
       return loginSuccess && !loginError;
     } catch (error) {
       console.error('Login process failed:', error);
