@@ -1,4 +1,4 @@
-import puppeteer, { Browser, ElementHandle, Page } from '@cloudflare/puppeteer';
+import puppeteer, { Browser, ElementHandle, Page } from 'puppeteer';
 import { SleepUtil } from './SleepUtil';
 
 class M365LoginUtil {
@@ -6,8 +6,12 @@ class M365LoginUtil {
 
   protected static M365_LOGIN_URL_NORMALIZED: string = new URL(this.M365_LOGIN_URL).toString();
 
-  public static async login(browser: Fetcher, totpGenerator: Fetcher, email: string, password: string, totpKey: string): Promise<boolean> {
-    const browserInstance: Browser = await puppeteer.launch(browser);
+  public static async login(_browser: Fetcher, totpGenerator: Fetcher, email: string, password: string, totpKey: string): Promise<boolean> {
+    const browserInstance: Browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page: Page = await browserInstance.newPage();
 
     try {

@@ -15,20 +15,21 @@
     "test": "vitest --run || 1"
   },
   "dependencies": {
-    "hono": "^4.8.x",
     "chanfana": "^2.8.x",
+    "hono": "^4.8.x",
     "zod": "^4.0.x"
   },
   "devDependencies": {
     "@cloudflare/puppeteer": "^1.0.4",
-    "vitest": "^4.0.7",
-    "wrangler": "^4.45.4",
     "eslint": "^9.39.x",
     "eslint-config-prettier": "^10.1.x",
     "eslint-plugin-prettier": "^5.5.x",
     "globals": "^16.5.x",
     "prettier": "^3.6.x",
+    "puppeteer": "^24.29.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.x"
+    "typescript-eslint": "^8.46.x",
+    "vitest": "^4.0.7",
+    "wrangler": "^4.45.4"
   }
 }
